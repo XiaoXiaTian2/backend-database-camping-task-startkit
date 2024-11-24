@@ -3,7 +3,8 @@ volumes:
   pgData:
 services:
   postgres: 
-    image: postgres:16.4-alpine3.20
+    image: postgres:17.2-alpine3.20
+    container_name: postgres
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -24,6 +25,8 @@ services:
   db_migrate:
     build:
       dockerfile: ./migrate.Dockerfile
+    image: db_migrate
+    container_name: postgresmigrate
     environment:
       - DB_HOST=postgres
       - DB_DATABASE=${POSTGRES_DB}

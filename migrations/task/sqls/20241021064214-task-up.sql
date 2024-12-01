@@ -6,14 +6,14 @@
 --   █ █   █████ █   █     █ 
 -- ===================== ====================
 -- 1. 用戶資料，資料表為 USER
-CREATE TABLE IF NOT EXISTS "USER" (
-  "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
-  "name" varchar(50) NOT NULL,
-  "email" varchar(320) UNIQUE NOT NULL,
-  "role" varchar(20) NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  "updated_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE IF NOT EXISTS "USER" (
+--   "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
+--   "name" varchar(50) NOT NULL,
+--   "email" varchar(320) UNIQUE NOT NULL,
+--   "role" varchar(20) NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+--   "updated_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
 -- 1. 新增：新增六筆用戶資料，資料如下：
 --     1. 用戶名稱為`李燕容`，Email 為`lee2000@hexschooltest.io`，Role為`USER`
@@ -60,24 +60,24 @@ LIMIT 3;
 --    █ █   █████ █   █    █████ 
 -- ===================== ====================
 -- 2. 組合包方案 CREDIT_PACKAGE、客戶購買課程堂數 CREDIT_PURCHASE
-CREATE TABLE IF NOT EXISTS "CREDIT_PACKAGE" (
-  "id" serial PRIMARY KEY,
-  "name" varchar(50) NOT NULL,
-  "cover_url" varchar(2048),
-  "credit_amount" integer NOT NULL,
-  "price" numeric(10,2) NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE IF NOT EXISTS "CREDIT_PACKAGE" (
+--   "id" serial PRIMARY KEY,
+--   "name" varchar(50) NOT NULL,
+--   "cover_url" varchar(2048),
+--   "credit_amount" integer NOT NULL,
+--   "price" numeric(10,2) NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS "CREDIT_PURCHASE" (
-  "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
-  "user_id" uuid NOT NULL REFERENCES "USER"(id),
-  "credit_package_id" integer NOT NULL REFERENCES "CREDIT_PACKAGE"(id),
-  "purchased_credits" integer NOT NULL,
-  "price_paid" numeric(10,2) NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  "purchase_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE IF NOT EXISTS IF NOT EXISTS "CREDIT_PURCHASE" (
+--   "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
+--   "user_id" uuid NOT NULL REFERENCES "USER"(id),
+--   "credit_package_id" integer NOT NULL REFERENCES "CREDIT_PACKAGE"(id),
+--   "purchased_credits" integer NOT NULL,
+--   "price_paid" numeric(10,2) NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+--   "purchase_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
 -- 2-1. 新增：在`CREDIT_PACKAGE` 資料表新增三筆資料，資料需求如下：
     -- 1. 名稱為 `7 堂組合包方案`，價格為`1,400` 元，堂數為`7`
@@ -116,28 +116,28 @@ VALUES
   )
 ;
 -- 優化版
-WITH Users AS (
-  SELECT id AS user_id, name 
-  FROM "USER"
-  WHERE email IN ('wXlTq@hexschooltest.io', 'richman@hexschooltest.io')
-),
-Package AS (
-  SELECT id AS package_id, name, credit_amount, price
-  FROM "CREDIT_PACKAGE"
-  WHERE name IN ('14 堂組合包方案', '21 堂組合包方案')
-)
-INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, purchased_credits, price_paid)
-SELECT 
-  u.user_id,
-  p.package_id,
-  p.credit_amount,
-  p.price
-FROM Users u
-JOIN Package p
-  ON
-    (u.email = 'wXlTq@hexschooltest.io' AND p.name IN ('14 堂組合包方案', '21 堂組合包方案'))
-    OR
-    (u.email = 'richman@hexschooltest.io' AND p.name = '14 堂組合包方案');
+-- WITH Users AS (
+--   SELECT id AS user_id, name 
+--   FROM "USER"
+--   WHERE email IN ('wXlTq@hexschooltest.io', 'richman@hexschooltest.io')
+-- ),
+-- Package AS (
+--   SELECT id AS package_id, name, credit_amount, price
+--   FROM "CREDIT_PACKAGE"
+--   WHERE name IN ('14 堂組合包方案', '21 堂組合包方案')
+-- )
+-- INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, purchased_credits, price_paid)
+-- SELECT 
+--   u.user_id,
+--   p.package_id,
+--   p.credit_amount,
+--   p.price
+-- FROM Users u
+-- JOIN Package p
+--   ON
+--     (u.email = 'wXlTq@hexschooltest.io' AND p.name IN ('14 堂組合包方案', '21 堂組合包方案'))
+--     OR
+--     (u.email = 'richman@hexschooltest.io' AND p.name = '14 堂組合包方案');
 
 -- ████████  █████   █    ████   
 --   █ █   ██    █  █         ██ 
@@ -146,29 +146,29 @@ JOIN Package p
 --   █ █   █████ █   █    ████   
 -- ===================== ====================
 -- 3. 教練資料 ，資料表為 COACH ,SKILL,COACH_LINK_SKILL
-CREATE TABLE IF NOT EXISTS "SKILL" (
-  "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  "name" varchar(50) UNIQUE NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE IF NOT EXISTS "SKILL" (
+--   "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+--   "name" varchar(50) UNIQUE NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
-CREATE TABLE IF NOT EXISTS "COACH" (
-  "id" uuid PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-  "user_id" uuid NOT NULL REFERENCES "USER"(id),
-  "experience_years" integer,
-  "description" text,
-  "profile_image_url" varchar(2048),
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  "updated_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  UNIQUE("user_id")
-);
+-- CREATE TABLE IF NOT EXISTS "COACH" (
+--   "id" uuid PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+--   "user_id" uuid NOT NULL REFERENCES "USER"(id),
+--   "experience_years" integer,
+--   "description" text,
+--   "profile_image_url" varchar(2048),
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+--   "updated_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+--   UNIQUE("user_id")
+-- );
 
-CREATE TABLE IF NOT EXISTS "COACH_LINK_SKILL" (
-  "coach_id" uuid NOT NULL REFERENCES "COACH"(id),
-  "skill_id" uuid NOT NULL REFERENCES "SKILL"(id),
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  PRIMARY KEY ("coach_id", "skill_id")
-);
+-- CREATE TABLE IF NOT EXISTS "COACH_LINK_SKILL" (
+--   "coach_id" uuid NOT NULL REFERENCES "COACH"(id),
+--   "skill_id" uuid NOT NULL REFERENCES "SKILL"(id),
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+--   PRIMARY KEY ("coach_id", "skill_id")
+-- );
 -- 3-1 新增：在`COACH`資料表新增三筆教練資料，資料需求如下：
     -- 1. 將用戶`李燕容`新增為教練，並且年資設定為2年（提示：使用`李燕容`的email ，取得 `李燕容` 的 `id` ）
     -- 2. 將用戶`肌肉棒子`新增為教練，並且年資設定為2年
@@ -190,24 +190,24 @@ VALUES
 ;
 
 -- WITH優化版
-WITH "CUSER" AS (
-  SELECT id, name
-  FROM "USER"
-  WHERE email IN ('lee2000@hexschooltest.io', 'muscle@hexschooltest.io', 'starplatinum@hexschooltest.io')
-)
-INSERT INTO "COACH" (user_id, experience_years)
-SELECT 
-  u.id, 
-  2
-FROM "CUSER";
+-- WITH "CUSER" AS (
+--   SELECT id, name
+--   FROM "USER"
+--   WHERE email IN ('lee2000@hexschooltest.io', 'muscle@hexschooltest.io', 'starplatinum@hexschooltest.io')
+-- )
+-- INSERT INTO "COACH" (user_id, experience_years)
+-- SELECT 
+--   u.id, 
+--   2
+-- FROM "CUSER";
 
 -- 優化版
-INSERT INTO "COACH" (user_id, experience_years)
-SELECT 
-  u.id,
-  2
-FROM "USER" u
-WHERE u.email IN ('lee2000@hexschooltest.io', 'muscle@hexschooltest.io', 'starplatinum@hexschooltest.io');
+-- INSERT INTO "COACH" (user_id, experience_years)
+-- SELECT 
+--   u.id,
+--   2
+-- FROM "USER" u
+-- WHERE u.email IN ('lee2000@hexschooltest.io', 'muscle@hexschooltest.io', 'starplatinum@hexschooltest.io');
 
 -- 3-2. 新增：承1，為三名教練新增專長資料至 `COACH_LINK_SKILL` ，資料需求如下：
     -- 1. 所有教練都有 `重訓` 專長
@@ -263,18 +263,18 @@ SET experience_years =
   END;
 
 -- 另類寫法
-WITH "CUser" AS (
-    SELECT id AS user_id, name, email
-    FROM "USER"
-    WHERE email IN ('muscle@hexschooltest.io', 'starplatinum@hexschooltest.io')
-)
-UPDATE "COACH"
-SET experience_years = 
-    CASE 
-        WHEN user_id = (SELECT user_id FROM "CUser" WHERE email = 'muscle@hexschooltest.io') THEN 3
-        WHEN user_id = (SELECT user_id FROM "CUser" WHERE email = 'starplatinum@hexschooltest.io') THEN 5
-    END
-WHERE user_id IN (SELECT user_id FROM "CUser");
+-- WITH "CUser" AS (
+--     SELECT id AS user_id, name, email
+--     FROM "USER"
+--     WHERE email IN ('muscle@hexschooltest.io', 'starplatinum@hexschooltest.io')
+-- )
+-- UPDATE "COACH"
+-- SET experience_years = 
+--     CASE 
+--         WHEN user_id = (SELECT user_id FROM "CUser" WHERE email = 'muscle@hexschooltest.io') THEN 3
+--         WHEN user_id = (SELECT user_id FROM "CUser" WHERE email = 'starplatinum@hexschooltest.io') THEN 5
+--     END
+-- WHERE user_id IN (SELECT user_id FROM "CUser");
 
 -- 3-4 刪除：新增一個專長 空中瑜伽 至 SKILL 資料表，之後刪除此專長。
 INSERT INTO "SKILL" (name)
@@ -291,27 +291,27 @@ WHERE name = '空中瑜伽';
 --    █ █   █████ █   █        █ 
 -- ===================== ==================== 
 -- 4. 課程管理 COURSE 、組合包方案 CREDIT_PACKAGE
-CREATE TABLE "COURSE" (
-  "id" serial PRIMARY KEY,
-  "user_id" uuid NOT NULL REFERENCES "USER"(id),
-  "skill_id" uuid NOT NULL REFERENCES "SKILL"(id),
-  "name" varchar(100) NOT NULL,
-  "description" text,
-  "start_at" timestamp NOT NULL,
-  "end_at" timestamp NOT NULL,
-  "max_participants" integer NOT NULL,
-  "meeting_url" varchar(2048) NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE "COURSE" (
+--   "id" serial PRIMARY KEY,
+--   "user_id" uuid NOT NULL REFERENCES "USER"(id),
+--   "skill_id" uuid NOT NULL REFERENCES "SKILL"(id),
+--   "name" varchar(100) NOT NULL,
+--   "description" text,
+--   "start_at" timestamp NOT NULL,
+--   "end_at" timestamp NOT NULL,
+--   "max_participants" integer NOT NULL,
+--   "meeting_url" varchar(2048) NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
-CREATE TABLE IF NOT EXISTS "CREDIT_PACKAGE" (
-  "id" serial PRIMARY KEY,
-  "name" varchar(50) NOT NULL,
-  "cover_url" varchar(2048),
-  "credit_amount" integer NOT NULL,
-  "price" numeric(10,2) NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE IF NOT EXISTS "CREDIT_PACKAGE" (
+--   "id" serial PRIMARY KEY,
+--   "name" varchar(50) NOT NULL,
+--   "cover_url" varchar(2048),
+--   "credit_amount" integer NOT NULL,
+--   "price" numeric(10,2) NOT NULL,
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
 -- 4-1. 新增：在`COURSE` 新增一門課程，資料需求如下：
     -- 1. 教練設定為用戶`李燕容` 
@@ -341,18 +341,18 @@ VALUES
 -- ===================== ====================
 
 -- 5. 客戶預約與授課 COURSE_BOOKING
-CREATE TABLE "COURSE_BOOKING" (
-  "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
-  "user_id" uuid NOT NULL REFERENCES "USER"(id),
-  "course_id" integer NOT NULL REFERENCES "COURSE"(id),
-  "booking_at" timestamp NOT NULL,
-  "status" varchar(20) NOT NULL,
-  "join_at" timestamp,
-  "leave_at" timestamp,
-  "cancelled_at" timestamp,
-  "cancellation_reason" varchar(255),
-  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE "COURSE_BOOKING" (
+--   "id" uuid PRIMARY KEY NOT NULL DEFAULT (gen_random_uuid()),
+--   "user_id" uuid NOT NULL REFERENCES "USER"(id),
+--   "course_id" integer NOT NULL REFERENCES "COURSE"(id),
+--   "booking_at" timestamp NOT NULL,
+--   "status" varchar(20) NOT NULL,
+--   "join_at" timestamp,
+--   "leave_at" timestamp,
+--   "cancelled_at" timestamp,
+--   "cancellation_reason" varchar(255),
+--   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
 -- 5-1. 新增：請在 `COURSE_BOOKING` 新增兩筆資料：
     -- 1. 第一筆：`王小明`預約 `李燕容` 的課程
@@ -380,22 +380,22 @@ VALUES
 ;
 
 -- 優化版
-WITH
-  user_ids AS (
-    SELECT
-      (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io') AS wang_id,
-      (SELECT id FROM "USER" WHERE email = 'richman@hexschooltest.io') AS hao_id,
-      (SELECT id FROM "USER" WHERE email = 'lee2000@hexschooltest.io') AS coach_id
-  ),
-  course_id AS (
-    SELECT id AS course_id
-    FROM "COURSE"
-    WHERE user_id = (SELECT coach_id FROM user_ids)
-  )
-INSERT INTO "COURSE_BOOKING" (user_id, course_id, booking_at, status)
-VALUES
-  ((SELECT wang_id FROM user_ids), (SELECT course_id FROM course_id), '2024-11-24 16:00:00', '即將授課'),
-  ((SELECT hao_id FROM user_ids), (SELECT course_id FROM course_id), '2024-11-24 16:00:00', '即將授課');
+-- WITH
+--   user_ids AS (
+--     SELECT
+--       (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io') AS wang_id,
+--       (SELECT id FROM "USER" WHERE email = 'richman@hexschooltest.io') AS hao_id,
+--       (SELECT id FROM "USER" WHERE email = 'lee2000@hexschooltest.io') AS coach_id
+--   ),
+--   course_id AS (
+--     SELECT id AS course_id
+--     FROM "COURSE"
+--     WHERE user_id = (SELECT coach_id FROM user_ids)
+--   )
+-- INSERT INTO "COURSE_BOOKING" (user_id, course_id, booking_at, status)
+-- VALUES
+--   ((SELECT wang_id FROM user_ids), (SELECT course_id FROM course_id), '2024-11-24 16:00:00', '即將授課'),
+--   ((SELECT hao_id FROM user_ids), (SELECT course_id FROM course_id), '2024-11-24 16:00:00', '即將授課');
 
 -- 5-2. 修改：`王小明`取消預約 `李燕容` 的課程，請在`COURSE_BOOKING`更新該筆預約資料：
     -- 1. 取消預約時間`cancelled_at` 設為2024-11-24 17:00:00

@@ -47,6 +47,3 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
     - name: test migrate
       run: npm run init && npm run migrate
-        
-        
-        
